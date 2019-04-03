@@ -60,7 +60,7 @@ def value_counts(dataframe):
 
 def handle_missing_values(dataframe):
     return dataframe.assign(
-        total_charges = dataframe.total_charges.fillna(0)
+        total_charges = dataframe.total_charges.dropna(0)
     )
 
 def churn_num(dataframe):
@@ -104,11 +104,33 @@ conditions_lns = [
 ]
 
 def conditional_encodes(df):
-    df['phone_id'] = np.select(conditions_lns, choices_lns)
+    df['multiple_lines'] = np.select(conditions_lns, choices_lns)
     df['household_type_id'] = np.select(conditions_pdep, choices)
     df['streaming_services'] = np.select(conditions_strm, choices)
-    df['secback'] = np.select(conditions_secback, choices)
+    df['online_security_backup'] = np.select(conditions_secback, choices)
     return df
 
+def encode_gender(df):
+    encoder=LabelEncoder()
+    encoder.fit(df.gender)
+    return df.assign(gender_e = encoder.transform(df.gender))
+
+def encode_tech(df):
+    encoder=LabelEncoder()
+    encoder.fit(df.tech_support)
+    return df.assign(tech_support_e = encoder.transform(df.tech_support))
+
+def encode_paperless(df):
+    encoder=LabelEncoder()
+    encoder.fit(df.paperless_billing)
+    return df.assign(paperless_billing_e = encoder.transform(df.paperless_billing))
 
 def prep_telco_data(df):
+        return df.pipe(handle_missing_values)\
+        .pipe(churn_num)\
+        .pipe(tenure_year)\
+        .pipe(conditional_encodes)\
+        .pipe(encode_seniors)\
+        .pipe(encode_gender)\
+        .pipe(encode_tech)\
+        .pipe(encode_paperless)
