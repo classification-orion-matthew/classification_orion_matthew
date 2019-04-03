@@ -108,5 +108,6 @@ def prep_telco_data(df):
         .pipe(encode_gender)\
         .pipe(encode_device_protection)\
         .pipe(encode_tech)\
+        .pipe(format_totals)\
         .pipe(encode_paperless)
 
