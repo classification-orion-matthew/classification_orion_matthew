@@ -92,7 +92,8 @@ def encode_device_protection(df):
 
 def format_totals(df):
     df['total_charges'] = df['total_charges'].convert_objects(convert_numeric=True)
-    return df.total_charges.dropna(0, inplace=True)
+    df.total_charges.dropna(0, inplace=True)
+    return df
 
 def drop_cols(df):
     return df.drop(columns=(['customer_id', 'partner', 'dependents', 'phone_service',
@@ -101,13 +102,13 @@ def drop_cols(df):
     'internet_service_type', 'payment_type', 'tech_support', 'paperless_billing', 'device_protection']))
 
 def prep_telco_data(df):
-        return df.pipe(handle_missing_values)\
-        .pipe(churn_num)\
-        .pipe(tenure_year)\
-        .pipe(conditional_encodes)\
-        .pipe(encode_gender)\
-        .pipe(encode_device_protection)\
-        .pipe(encode_tech)\
-        .pipe(format_totals)\
-        .pipe(encode_paperless)
+    return df.pipe(handle_missing_values)\
+    .pipe(churn_num)\
+    .pipe(tenure_year)\
+    .pipe(conditional_encodes)\
+    .pipe(encode_gender)\
+    .pipe(encode_device_protection)\
+    .pipe(encode_tech)\
+    .pipe(encode_paperless)\
+    .pipe(format_totals)
 
