@@ -90,6 +90,10 @@ def encode_device_protection(df):
     encoder.fit(df.device_protection)
     return df.assign(device_protection_e = encoder.transform(df.device_protection))
 
+def format_totals(df):
+    df['total_charges'] = df['total_charges'].convert_objects(convert_numeric=True)
+    return df.total_charges.dropna(0, inplace=True)
+
 def drop_cols(df):
     return df.drop(columns=(['customer_id', 'partner', 'dependents', 'phone_service',
     'multiple_lines', 'online_security', 'online_backup',
