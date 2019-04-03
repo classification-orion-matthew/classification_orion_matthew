@@ -64,7 +64,7 @@ def conditional_encodes(df):
     (df['phone_service'] == 'No') & (df['multiple_lines'] == 'No')
     ]
 
-    df['multiple_lines'] = np.select(conditions_lns, choices_lns)
+    df['phone_id'] = np.select(conditions_lns, choices_lns)
     df['household_type_id'] = np.select(conditions_pdep, choices)
     df['streaming_services'] = np.select(conditions_strm, choices)
     df['online_security_backup'] = np.select(conditions_secback, choices)
