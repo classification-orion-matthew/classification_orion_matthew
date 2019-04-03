@@ -2,7 +2,7 @@
 misc functions for working with the titanic and iris dbase
 '''
 import pandas as pd
-
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 
@@ -33,34 +33,37 @@ def tenure_year(dataframe):
 choices_lns = [2, 1, 0]
 choices = [3, 2, 1, 0]
 
-conditions_secback = [
+
+
+
+def conditional_encodes(df):
+    conditions_secback = [
     (df['online_security'] == 'Yes') & (df['online_backup'] == 'Yes'),
     (df['online_security'] == 'No') & (df['online_backup'] == 'Yes'), 
     (df['online_security'] == 'Yes') & (df['online_backup'] == 'No'),
     (df['online_security'] == 'No') & (df['online_backup'] == 'No')
     ]
 
-conditions_strm = [
+    conditions_strm = [
     (df['streaming_tv'] == 'Yes') & (df['streaming_movies'] == 'Yes'),
     (df['streaming_tv'] == 'No') & (df['streaming_movies'] == 'Yes'), 
     (df['streaming_tv'] == 'Yes') & (df['streaming_movies'] == 'No'),
     (df['streaming_tv'] == 'No') & (df['streaming_movies'] == 'No')
-]
+    ]
 
-conditions_pdep = [
+    conditions_pdep = [
     (df['partner'] == 'Yes') & (df['dependents'] == 'Yes'),
     (df['partner'] == 'No') & (df['dependents'] == 'Yes'), 
     (df['partner'] == 'Yes') & (df['dependents'] == 'No'),
     (df['partner'] == 'No') & (df['dependents'] == 'No')
-]
+    ]
 
-conditions_lns = [
+    conditions_lns = [
     (df['phone_service'] == 'Yes') & (df['multiple_lines'] == 'Yes'),
     (df['phone_service'] == 'Yes') & (df['multiple_lines'] == 'No'),
     (df['phone_service'] == 'No') & (df['multiple_lines'] == 'No')
-]
+    ]
 
-def conditional_encodes(df):
     df['multiple_lines'] = np.select(conditions_lns, choices_lns)
     df['household_type_id'] = np.select(conditions_pdep, choices)
     df['streaming_services'] = np.select(conditions_strm, choices)
@@ -82,12 +85,24 @@ def encode_paperless(df):
     encoder.fit(df.paperless_billing)
     return df.assign(paperless_billing_e = encoder.transform(df.paperless_billing))
 
+def encode_device_protection(df):
+    encoder=LabelEncoder()
+    encoder.fit(df.device_protection)
+    return df.assign(device_protection_e = encoder.transform(df.device_protection))
+
+def drop_cols(df):
+    return df.drop(columns=(['customer_id', 'partner', 'dependents', 'phone_service',
+    'multiple_lines', 'online_security', 'online_backup',
+    'streaming_tv', 'gender','streaming_movies', 'contract_type',
+    'internet_service_type', 'payment_type', 'tech_support', 'paperless_billing', 'device_protection']))
+
 def prep_telco_data(df):
         return df.pipe(handle_missing_values)\
         .pipe(churn_num)\
         .pipe(tenure_year)\
         .pipe(conditional_encodes)\
-        .pipe(encode_seniors)\
         .pipe(encode_gender)\
+        .pipe(encode_device_protection)\
         .pipe(encode_tech)\
         .pipe(encode_paperless)
+
