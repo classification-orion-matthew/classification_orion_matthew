@@ -33,7 +33,7 @@ def handle_missing_values(dataframe):
     '''removes customers with total charges of 0, i.e. customers that haven't been with the company long
     enough to glean information about churn from as they just signed up (very small portion of dataset)'''
     return dataframe.assign(
-        total_charges = dataframe.total_charges.dropna(0)
+        total_charges = dataframe.total_charges.dropna()
     )
 
 def churn_num(dataframe):
@@ -132,7 +132,7 @@ def encode_device_protection(df):
 def format_totals(df):
     '''formats total charges from a string object to a numeric type'''
     df['total_charges'] = df['total_charges'].convert_objects(convert_numeric=True)
-    df.total_charges.dropna(0, inplace=True)
+    df = df[pd.notna(df.total_charges)]
     return df
 
 def drop_cols(df):
