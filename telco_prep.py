@@ -6,6 +6,19 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 
+
+def peekatdata(df):
+    '''gives cursory sample of dataframe passed'''
+    head_df = df.head(5)
+    print(head_df)
+    tail_df = df.tail(5)
+    print(tail_df)
+    shape_tuple = df.shape
+    print(shape_tuple)
+    describe_df = df.describe()
+    print(describe_df)
+    df.info()
+
 # binning and value_counts: 
 def value_counts(dataframe):
     ''' assesses numerical/continuous data in telco and bins if appropriate'''
