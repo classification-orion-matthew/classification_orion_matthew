@@ -137,7 +137,7 @@ def format_totals(df):
 
 def drop_cols(df):
     '''drops customer_id and non-numeric versions of existing columns for exploratory analysis purposes'''
-    return df.drop(columns=(['customer_id', 'partner', 'dependents', 'phone_service',
+    return df.drop(columns=(['partner', 'dependents', 'phone_service',
     'multiple_lines', 'online_security', 'online_backup',
     'streaming_tv', 'gender','streaming_movies', 'contract_type',
     'internet_service_type', 'internet_service_type_id', 'payment_type', 'tech_support', 'paperless_billing', 'device_protection']))
@@ -154,4 +154,40 @@ def prep_telco_data(df):
     .pipe(encode_paperless)\
     .pipe(sort_int_service)\
     .pipe(format_totals)
+
+def get_confusion_metrics(cnf):
+    FP = cnf.sum(axis=0) - np.diag(cnf)  
+    FN = (cnf.sum(axis=1)) - np.diag(cnf)
+    TP = np.diag(cnf)
+    TN = cnf.sum() - (FP + FN + TP)
+
+    FP = FP.astype(float)
+    FN = FN.astype(float)
+    TP = TP.astype(float)
+    TN = TN.astype(float)
+
+    # Sensitivity, hit rate, recall, or true positive rate
+    TPR = TP/(TP+FN)
+    print(f'Recall: {TPR}')
+    # Specificity or true negative rate
+    TNR = TN/(TN+FP) 
+    print(f'True Negative Rate: {TNR}')
+    # Precision or positive predictive value
+    PPV = TP/(TP+FP)
+    print(f'Precision: {PPV}')
+    # Negative predictive value
+    NPV = TN/(TN+FN)
+    print(f'Negative Predictive Value: {NPV}')
+    # Fall out or false positive rate
+    FPR = FP/(FP+TN)
+    print(f'False positive Rate: {FPR}')
+    # False negative rate
+    FNR = FN/(TP+FN)
+    print(f'False Negative Rate: {FNR}')
+    # False discovery rate
+    FDR = FP/(TP+FP)
+    print(f'False Discovery Rate: {FDR}')
+    # Overall accuracy
+    ACC = (TP+TN)/(TP+FP+FN+TN)
+    print(f'Overall Accuracy: {ACC}')
 
